@@ -25,9 +25,9 @@ response = client.models.generate_content(
     contents= artworks_extracting_themes_prompt
 
 )
-    if response.text == "ERROR":
-        print("I do not recognize that artwork. Please try again.")
-        print("")
-    else:
-        print(response.text)
-        break
+
+if response.text == "ERROR":
+    print("I do not recognize that artwork. Please try again.")
+    print("")
+else:
+    print(response.text)
