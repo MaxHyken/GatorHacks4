@@ -19,5 +19,5 @@ This is a project for GatorHacks4 hackathon.
 
 To run the main application:
 ```bash
-python src/main.py
+python src/max_main.py
 ```
