@@ -1,11 +1,10 @@
 import os
 from google import genai
 
-google_api_key = "AIzaSyAdCvnxTFuXUCBLK3KX6rtzlyto1qaBA_U"
+while True:
+    artwork = input("Enter the name of an artwork: ")
 
-artwork = input("Enter the name of an artwork: ")
-
-prompt = f"""
+    prompt = f"""
 You are an art analysis assistant.
 Artwork: {artwork}
 Given a description, title, or image of an artwork, identify and extract structured information about it.
@@ -51,7 +50,7 @@ Color Palette / Mood (optional) – brief description of dominant tones or emoti
 Techniques or Distinctive Features (optional) – e.g., brushstroke texture, use of light, collage, installation scale.
 """
 
-prompt_2 = f"""
+    prompt_2 = f"""
 You are an art recommendation assistant.
 Given structured information about an artwork, suggest related artworks, artists, or movements that share similar qualities.
 Base your suggestions on overlaps in themes, style, time period, technique, and cultural context.
@@ -79,7 +78,7 @@ Metadata:
   "Techniques or Distinctive Features (optional)": "Heavy use of impasto (thick paint application), distinctive swirling and directional brushstrokes (often visible in short, thick strokes)"
 """
 
-prompt3 = (f"""
+    prompt3 = (f"""
             Return a description of {artwork} using the following format: The [ARTWORK] was created by [ARTIST(s)] in
            [COUNTRY], [YEAR]. It is currently located in [LOCATION]. Add an extra sentence discussing the style, themes, historical context, or subject matter,
            depending on what you believe to be most relevant. Also provide the wikipedia link for {artwork}. Do not use
@@ -87,16 +86,22 @@ prompt3 = (f"""
            
            Now, provide 6 suggestions for other similar artworks, following this guideline: the first four should be 
            findable in the same city, and the last two should be located in the same country.
+           
+           If {artwork} is not a known painting or sculpture, return simply "ERROR" and nothing else.
            """)
 
-# Load API key from environment variable
-client = genai.Client(api_key=os.getenv(google_api_key))
+    # Load API key from environment variable
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-# Send a prompt to the model
-response = client.models.generate_content(
-    model="gemini-2.5-flash",
-    contents= prompt3
+    # Send a prompt to the model
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents= prompt3
 
 )
-
-print(response.text)
+    if response.text == "ERROR":
+        print("I do not recognize that artwork. Please try again.")
+        print("")
+    else:
+        print(response.text)
+        break
