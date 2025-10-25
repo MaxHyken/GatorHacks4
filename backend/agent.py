@@ -20,6 +20,9 @@ class Agent:
                 encoding="utf-8")
             self.__artworks_get_suggestions_prompt = (prompts/ "Artworks_Get_Suggestions_Prompt.txt").read_text(
                 encoding="utf-8")
+            self.__artworks_get_details_prompt = (prompts/"Artworks_Get_Details_Prompt.txt").read_text(
+                encoding="utf-8")
+
 
         # Load API key from environment variable
         self.__client = genai.Client(api_key=Agent.google_api_key)
@@ -28,11 +31,21 @@ class Agent:
         lines = self.__artworks_extracting_themes_prompt.splitlines()
         lines[1] += f" {self.__artwork}"
         self.__artworks_extracting_themes_prompt = "\n".join(lines)
+        lines = self.__artworks_get_details_prompt.splitlines()
+        lines[0] += f" {self.__artwork}"
+        self.__artworks_get_details_prompt = "\n".join(lines)
 
     def get_themes(self):
         response = self.__client.models.generate_content(
             model=Agent.model_name,
             contents=self.__artworks_extracting_themes_prompt
+        )
+        return response.text
+
+    def get_details(self):
+        response = self.__client.models.generate_content(
+            model=Agent.model_name,
+            contents=self.__artworks_get_details_prompt
         )
         return response.text
 
@@ -54,4 +67,5 @@ class Agent:
 my_agent = Agent("artwork", "The Scream")
 my_agent.add_artwork_to_prompt()
 print(my_agent.get_themes())
+print(my_agent.get_details())
 print(my_agent.suggestions())
